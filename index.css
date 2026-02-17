@@ -132,6 +132,7 @@ main .info h4 {
 }
 
 main .info ul {
+  transition: 1.0s ease-in-out;
   position: relative;
   height: 400px;
   width: 100%;

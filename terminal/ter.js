@@ -1,15 +1,16 @@
 const terminl = document.querySelector('.terminal');
-const inputTextarea = document.querySelector("#text");
+let inputTextarea = document.querySelector("#text");
 
 
 let isAnimation = false;
 let newCommand,newInput,newOutput,container;
 
-window.addEventListener("keydown",function(){
+window.addEventListener("keydown",(e) => {
+    window.scrollTo(0, document.body.offsetHeight);
     inputTextarea.focus();
     inputTextarea.addEventListener('input', function () {
     });
-});
+},{passive:true});
 
 addNewCommandBlock();
 addParagraphAnimation(banner);
@@ -166,6 +167,7 @@ function newTab(link){
 
 
 function addNewCommandBlock(){
+    
     newCommand = null;
     newInput = null;
     newOutput = null;
@@ -187,8 +189,11 @@ function addNewCommandBlock(){
     newInput.innerHTML =
     `<div class = "prompt_hit">visitor@stupienius.Web:~$ </div>
      <div class = "cursor"></div>`
+
      
     window.scrollTo(0, document.body.offsetHeight);
+    inputTextarea.style.top = `${document.body.offsetHeight}px`
+    console.log(inputTextarea.style.top)
 }
 
 function removeCursor(){

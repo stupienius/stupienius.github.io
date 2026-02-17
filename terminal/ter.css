@@ -1,99 +1,98 @@
-*{
-    margin: 0;
-    padding: 0;
-    border: 0;
-    box-sizing: border-box;
-    color: #ff6fdb;
-    font-weight: 1000;
+* {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  box-sizing: border-box;
+  color: #ff6fdbbc;
+  font-weight: 1000;
 }
 
 body {
-    font-family: cursor, monospace;
-    background-color: rgb(66, 51, 53);
-    color: #fff;
-    margin: 0;
-    padding: 0;
+  font-family: cursor, monospace;
+  background-color: rgb(66, 51, 53);
+  color: #fff;
+  margin: 0;
+  padding: 0;
 }
 
-#text{
-    position: absolute;
-    left: -1000px;
-    bottom: -100000px;
-    resize: none;
+#text {
+  position: absolute;
+  left: -1000px;
+  resize: none;
+  z-index: 10;
 }
 
 .terminal {
-    width: 95%;
-    margin: 50px auto;
-    padding: 20px;
-    background-color: #181818;
-    border-radius: 5px;
-    padding-bottom: 20px;
+  width: 95%;
+  margin: 50px auto;
+  padding: 20px;
+  background-color: #181818;
+  border-radius: 5px;
+  padding-bottom: 20px;
 }
 
-.container{
-    display: flex;
-    flex-direction: column;
+.container {
+  display: flex;
+  flex-direction: column;
 }
 
-.prompt_hit{
-    margin-right: 5px;
-    color: rgb(87, 94, 0);
+.prompt_hit {
+  margin-right: 5px;
+  color: rgb(87, 94, 0);
 }
 
-.prompt_input{
-    color: rgb(241, 133, 255);
+.prompt_input {
+  color: rgb(241, 133, 255);
 }
 
-.input{
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    margin: 15px 0 15px 0;
+.input {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin: 15px 0 15px 0;
 }
 
-.output{
-    display: flex;
-    flex-direction: column;
-    margin-left: 20px;
+.output {
+  display: flex;
+  flex-direction: column;
+  margin-left: 20px;
 }
 
-.cursor{
-    height: 17px;
-    width: 2px;
-    background-color: white;
-    animation: blink 1.5s infinite;
+.cursor {
+  height: 17px;
+  width: 2px;
+  background-color: white;
+  animation: blink 1.5s infinite;
 }
 
-p{
-    display: flex;
-    flex-direction: row;
-    gap: 15px;
+p {
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
 }
 
-a{
-    text-decoration: none;
+a {
+  text-decoration: none;
 }
 
-a:hover{
-    background-color: bisque;
+a:hover {
+  background-color: bisque;
 }
 
-.color1{
-    text-shadow: 0px 0px 5px rgb(255, 180, 83);
-    color: rgb(255, 178, 35);
+.color1 {
+  text-shadow: 0px 0px 5px rgb(255, 180, 83);
+  color: rgb(255, 178, 35);
 }
 
 @keyframes blink {
-    0%, 50% {
-      opacity: 1;
-    }
-    51%, 99% {
-      opacity: 0;
-    }
+
+  0%,
+  50% {
+    opacity: 1;
   }
 
-
-
-
-
+  51%,
+  99% {
+    opacity: 0;
+  }
+}

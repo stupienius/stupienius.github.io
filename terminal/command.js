@@ -65,7 +65,7 @@ const help = [
 const contact = [
     "(color1,https://github.com/stupienius)<github>         github/stupienius",
     "(color1,https://www.facebook.com/profile.php?id=100053935834116)<facebook>       facebook/Stupienius Null",
-    "(color1,https://www.instagram.com/stupienius/)<instagram>      github/stupienius",
+    "(color1,https://www.instagram.com/stupienius/)<instagram>      instagram/stupienius",
     "(color1,https://twitter.com/stupienius)<x>              x/stupienius"  
 ];
 
