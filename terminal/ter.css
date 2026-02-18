@@ -46,6 +46,7 @@ body {
 
 .prompt_input {
   color: #ee4a9f;
+  white-space: pre;
 }
 
 .input {

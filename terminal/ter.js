@@ -1,199 +1,278 @@
-const terminl = document.querySelector(".terminal");
-let inputTextarea = document.querySelector("#text");
+// ==============================
+// Terminal Elements & State
+// ==============================
+const terminal = document.querySelector(".terminal");
+const inputTextarea = document.querySelector("#text");
 
 let isAnimation = false;
-let newCommand, newInput, newOutput, container;
+let currentCommandBlock = {};
 
+// ==============================
+// Terminal Initialization
+// ==============================
 window.addEventListener(
   "keydown",
   (e) => {
     window.scrollTo(0, document.body.offsetHeight);
     inputTextarea.focus();
-    inputTextarea.addEventListener("input", function() { });
   },
   { passive: true },
 );
 
+// Add initial command block and banner
 addNewCommandBlock();
-addParagraphAnimation(banner);
+animateParagraph(banner);
 
+// ==============================
+// COMMAND EXECUTION LOGIC
+// ==============================
 function inputPrompt(textarea, e) {
   if (isAnimation) return;
+
+  const basePrompt = `<div class="prompt_hit">visitor@stupienius.Web:~$ </div>`;
+  const cursor = `<div class="cursor"></div>`;
+
+  console.log(e.key);
+
+  // Show typed letter immediately for alphabet keys
   if (/^[a-zA-Z]$/.test(e.key)) {
-    newInput.innerHTML = `<div class = "prompt_hit">visitor@stupienius.Web:~$ </div>
-         <div class = "prompt_input">${textarea.value}${e.key}</div>
-         <div class = "cursor"></div>`;
+    currentCommandBlock.input.innerHTML = `${basePrompt}
+      <div class="prompt_input">${textarea.value}${e.key}</div>${cursor}`;
+  } else if (e.key == "") {
+    currentCommandBlock.input.innerHTML = `${basePrompt}
+      <div class="prompt_input">${textarea.value} </div>${cursor}`;
   } else {
     setTimeout(() => {
-      newInput.innerHTML = `<div class = "prompt_hit">visitor@stupienius.Web:~$ </div>
-             <div class = "prompt_input">${textarea.value}</div>
-             <div class = "cursor"></div>`;
+      currentCommandBlock.input.innerHTML = `${basePrompt}
+        <div class="prompt_input">${textarea.value}</div>${cursor}`;
     }, 20);
   }
 }
 
 function executeCommand(textarea, e) {
-  if (isAnimation) return;
-  if (e.key !== "Enter") return;
-  const command = textarea.value;
-  history.push(command);
-  switch (command.trim()) {
-    case "whoami":
-      addParagraphAnimation(whoami);
-      break;
-    case "help":
-      addParagraphAnimation(help);
-      break;
-    case "who":
-      addParagraphAnimation(who);
-      break;
-    case "project":
-      addParagraphAnimation(project);
-      break;
-    case "song":
-      addParagraphAnimation(song);
-      newTab("https://www.youtube.com/watch?v=dQw4w9WgXcQ&pp=ygUJcmljayByb29s");
-      break;
-    case "contact":
-      addParagraphAnimation(contact);
-      break;
-    case "banner":
-      addParagraphAnimation(banner);
-      break;
-    case "game":
-      addParagraphAnimation(game);
-      break;
-    case "history":
-      addParagraphAnimation(history);
-      break;
-    case "singer":
-      addParagraphAnimation(["Must be Post Malone!!!!"]);
-      newTab("https://www.postmalone.com/");
-      break;
-    case "github":
-      addParagraphAnimation(["opening github..."]);
-      newTab("https://github.com/stupienius");
-      break;
-    case "facebook":
-      addParagraphAnimation(["opening facebook..."]);
-      newTab("https://www.facebook.com/profile.php?id=100053935834116");
-      break;
-    case "instagram":
-      addParagraphAnimation(["opening instagram..."]);
-      newTab("https://www.instagram.com/stupienius/");
-      break;
-    case "x":
-      addParagraphAnimation(["opening x..."]);
-      newTab("https://twitter.com/stupienius");
-      break;
-    default:
-      addParagraphAnimation(["command not find"]);
+  if (isAnimation || e.key !== "Enter") return;
+
+  const command = textarea.value.trim().split(" ")[0];
+  commandHistory.push(command);
+
+  const commandActions = {
+    whoami: () => animateParagraph(whoami),
+    help: () => animateParagraph(help),
+    who: () => animateParagraph(who),
+    project: () => animateParagraph(project),
+    song: () => {
+      animateParagraph(song);
+      openNewTab(
+        "https://www.youtube.com/watch?v=dQw4w9WgXcQ&pp=ygUJcmljayByb29s",
+      );
+    },
+    contact: () => animateParagraph(contact),
+    banner: () => animateParagraph(banner),
+    history: () => animateParagraph(commandHistory),
+    singer: () => {
+      animateParagraph(["Must be Post Malone!!!!"]);
+      openNewTab("https://www.postmalone.com/");
+    },
+    github: () => {
+      animateParagraph(["opening github..."]);
+      openNewTab("https://github.com/stupienius");
+    },
+    facebook: () => {
+      animateParagraph(["opening facebook..."]);
+      openNewTab("https://www.facebook.com/profile.php?id=100053935834116");
+    },
+    instagram: () => {
+      animateParagraph(["opening instagram..."]);
+      openNewTab("https://www.instagram.com/stupienius/");
+    },
+    x: () => {
+      animateParagraph(["opening x..."]);
+      openNewTab("https://twitter.com/stupienius");
+    },
+    clear: () => {
+      terminal.innerHTML = "";
+      addNewCommandBlock();
+    },
+    echo: () => {
+      const text = inputTextarea.value.slice(5).trim(); // get everything after "echo "
+      animateParagraph([text || ""]);
+    },
+    coin: () => {
+      const result = Math.random() < 0.5 ? "Heads 🪙" : "Tails 🪙";
+      animateParagraph([`You flipped a coin: ${result}`]);
+    },
+    hack: () => {
+      animateParagraph(hackSequence);
+    },
+    matrix: () => {
+      animateMatrix();
+    },
+    roll: () => {
+      const sides = 6;
+      const result = Math.floor(Math.random() * sides) + 1;
+      animateParagraph([`🎲 You rolled a ${result}`]);
+    },
+    // coffee: () => {
+    //   animateParagraph(coffee);
+    // },
+  };
+
+  // Execute command or fallback
+  if (commandActions[command]) {
+    commandActions[command]();
+  } else {
+    animateParagraph(["command not found"]);
   }
 }
 
-function toNextCommand() {
-  inputTextarea.value = "";
-  addNewCommandBlock();
-}
-
-function createOutputLine(text) {
-  const outputLine = document.createElement("div");
-  outputLine.textContent = text;
-  return outputLine;
-}
-
-async function addParagraphAnimation(text) {
-  removeCursor();
-  isAnimation = true;
-  for (const line of text) {
-    await addLineAnimation(line);
-  }
-  isAnimation = false;
-  toNextCommand();
-}
-
-async function addLineAnimation(text) {
-  const p = document.createElement("p");
-  newOutput.appendChild(p);
-  let color = "";
-  let link = "";
-  let inLabel = false;
-  const a = document.createElement("a");
-  for (let i = 0; i < text.length; i++) {
-    await new Promise((resolve) => setTimeout(resolve, 1));
-    if (text.charAt(i) === " " && text.charAt(i + 1) === " ") {
-      p.innerHTML += "&nbsp;&nbsp;";
-      i++;
-    } else {
-      if (text.charAt(i) === "(") {
-        //(class,link)<content>
-        i++;
-        for (; text.charAt(i) !== ","; i++) {
-          color += text.charAt(i);
-        }
-        i++;
-        for (; text.charAt(i) !== ")"; i++) {
-          link += text.charAt(i);
-        }
-        i++;
-        p.appendChild(a);
-        a.classList.add(color);
-        if (link.length > 0) {
-          a.href = link;
-          a.target = "_blank";
-        }
-      }
-      if (text.charAt(i) === "<" || text.charAt(i) === ">") {
-        inLabel = !inLabel;
-        i++;
-      }
-      if (inLabel) {
-        a.innerHTML += text.charAt(i);
-      } else {
-        p.innerHTML += text.charAt(i);
-      }
-      window.scrollTo(0, document.body.offsetHeight);
-    }
-  }
-  p.innerHTML += "<br>";
-}
-
-function newTab(link) {
-  setTimeout(function() {
-    window.open(link, "_blank");
-  }, 1500);
-}
-
+// ==============================
+// COMMAND BLOCK MANAGEMENT
+// ==============================
 function addNewCommandBlock() {
-  newCommand = null;
-  newInput = null;
-  newOutput = null;
-  container = null;
+  currentCommandBlock = {
+    container: document.createElement("div"),
+    input: document.createElement("div"),
+    output: document.createElement("div"),
+  };
 
-  newCommand = document.createElement("div");
-  newInput = document.createElement("div");
-  newOutput = document.createElement("div");
+  terminal.appendChild(currentCommandBlock.container);
+  currentCommandBlock.container.classList.add("container");
 
-  container = terminl.appendChild(newCommand);
-  newCommand.classList.add("container");
+  currentCommandBlock.container.appendChild(currentCommandBlock.input);
+  currentCommandBlock.input.classList.add("input");
 
-  container.appendChild(newInput);
-  newInput.classList.add("input");
+  currentCommandBlock.container.appendChild(currentCommandBlock.output);
+  currentCommandBlock.output.classList.add("output");
 
-  container.appendChild(newOutput);
-  newOutput.classList.add("output");
+  currentCommandBlock.input.innerHTML = `
+    <div class="prompt_hit">visitor@stupienius.Web:~$ </div>
+    <div class="cursor"></div>`;
 
-  newInput.innerHTML = `<div class = "prompt_hit">visitor@stupienius.Web:~$ </div>
-     <div class = "cursor"></div>`;
-
+  inputTextarea.value = "";
   window.scrollTo(0, document.body.offsetHeight);
   inputTextarea.style.top = `${document.body.offsetHeight}px`;
-  console.log(inputTextarea.style.top);
 }
 
 function removeCursor() {
-  const cursor = document.querySelectorAll(".cursor");
-  cursor.forEach((e) => {
-    e.style.display = "none";
-  });
+  document
+    .querySelectorAll(".cursor")
+    .forEach((el) => (el.style.display = "none"));
+}
+
+// ==============================
+// ANIMATION UTILS
+// ==============================
+async function animateParagraph(lines) {
+  removeCursor();
+  isAnimation = true;
+  for (const line of lines) await animateLine(line);
+  isAnimation = false;
+  addNewCommandBlock();
+}
+
+async function animateLine(text) {
+  const p = document.createElement("p");
+  currentCommandBlock.output.appendChild(p);
+
+  let link = "",
+    color = "",
+    inLabel = false;
+  const a = document.createElement("a");
+
+  for (let i = 0; i < text.length; i++) {
+    await new Promise((resolve) => setTimeout(resolve, 1));
+
+    if (text[i] === " " && text[i + 1] === " ") {
+      p.innerHTML += "&nbsp;&nbsp;";
+      i++;
+      continue;
+    }
+
+    // Parse color/link syntax: (class,link)<content>
+    if (text[i] === "(") {
+      i++;
+      while (text[i] !== ",") color += text[i++];
+      i++;
+      while (text[i] !== ")") link += text[i++];
+      i++;
+      p.appendChild(a);
+      if (link) {
+        a.href = link;
+        a.target = "_blank";
+      }
+      a.classList.add(color);
+      color = link = "";
+    }
+
+    if (text[i] === "<" || text[i] === ">") {
+      inLabel = !inLabel;
+      i++;
+    }
+
+    if (inLabel) a.innerHTML += text[i];
+    else p.innerHTML += text[i];
+
+    window.scrollTo(0, document.body.offsetHeight);
+  }
+
+  p.innerHTML += "<br>";
+}
+
+async function animateMatrix() {
+  removeCursor();
+  isAnimation = true;
+
+  const cols = 130; // number of columns
+  const rows = 20; // number of lines on screen
+  const chars = "01"; // characters to display
+  const speed = 50; // ms per frame
+
+  // initialize columns with random positions
+  const columnDrops = Array(cols);
+
+  for (let i = 0; i < cols; i++) {
+    columnDrops[i] = Math.floor(Math.random() * rows);
+  }
+
+  // create a container div for the matrix
+  const matrixContainer = document.createElement("div");
+  matrixContainer.style.fontFamily = "monospace";
+  matrixContainer.style.whiteSpace = "pre";
+  matrixContainer.style.color = "#ee4a9f"; // green text
+  currentCommandBlock.output.appendChild(matrixContainer);
+
+  // animate the matrix
+  for (let i = 0; i < 50; i++) {
+    // number of frames
+    let frame = "";
+    for (let y = 0; y < rows; y++) {
+      for (let x = 0; x < cols; x++) {
+        // decide if we print a char based on column drop
+        if (y === columnDrops[x]) {
+          frame += chars[Math.floor(Math.random() * chars.length)];
+        } else {
+          frame += " ";
+        }
+      }
+      frame += "\n";
+    }
+
+    matrixContainer.textContent = frame;
+
+    // move each column down
+    for (let x = 0; x < cols; x++) {
+      if (Math.random() > 0.9)
+        columnDrops[x] = 0; // reset randomly
+      else columnDrops[x] = (columnDrops[x] + 1) % rows;
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, speed));
+  }
+
+  isAnimation = false;
+  addNewCommandBlock();
+}
+
+function openNewTab(link) {
+  setTimeout(() => window.open(link, "_blank"), 1500);
 }

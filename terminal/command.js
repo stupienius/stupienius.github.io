@@ -34,10 +34,15 @@ const help = [
   "(color1,)<who>            Who is stupienius",
   "(color1,)<whoami>         Who are you",
   "(color1,)<song>           Listen to music",
-  "(color1,)<game>           Good phone game recommend to you",
   "(color1,)<banner>         Display the header",
   "(color1,)<history>        Your command history",
   "(color1,)<singer>         Best singer ever",
+  "(color1,)<clear>          Clear terminal",
+  "(color1,)<echo [text]>    Someone will repeat your messages",
+  "(color1,)<coin>           Flip a coin",
+  "(color1,)<hack>           Hack the website",
+  "(color1,)<matrix>         Display matrix effect",
+  "(color1,)<roll>           Roll a 6-sided dice",
 ];
 
 const contact = [
@@ -47,35 +52,32 @@ const contact = [
   "(color1,https://twitter.com/stupienius)<x>              x/stupienius",
 ];
 
-const game = [
-  "    Programming is a highly valuable skill in today's job market.With a high demand",
-  "for programmers, learning languages like Python,JavaScript, or C++ can significantly",
-  "boost your career prospects.Unlike gaming, which provides temporary entertainment,",
-  "programming equips you with practical skills for long-term success.",
-  "",
-  "    Programming also enhances critical thinking and problem-solving abilities.",
-  "Writing code involves logical reasoning, creativity, and persistence, skills",
-  "that are useful in various life aspects. In contrast, gaming often involves",
-  "repetitive tasks that don't contribute to personal development.",
-  "",
-  "    Moreover, programming encourages continuous learning. The tech industry constantly",
-  "evolves, motivating you to stay updated and improve your knowledge. This mindset of",
-  "lifelong learning is invaluable in our fast-paced world.",
-  "",
-  "    Lastly, programming empowers you to create and innovate. Unlike gaming, where you",
-  "consume content, programming allows you to build applications, websites, and more.",
-  "This creative process is highly rewarding and can lead to a profound sense of accomplishment.",
-  "",
-  "    In summary, while gaming is fun, investing your time in programming can enhance your",
-  "career prospects, develop valuable skills, foster personal growth, and unlock your",
-  "creative potential. Redirect your time from gaming to programming and experience",
-  "its transformative impact.",
-];
-
 const project = [
   "go to (color1,https://github.com/stupienius)<github> to see my whole preject.",
 ];
 
+// const coffee = [
+//   "    (  )   (   )  )",
+//   "     ) (   )  (  (",
+//   "     ( )  (    ) )",
+//   "     _____________",
+//   "    <_____________> ___",
+//   "    |             |/ _ \\",
+//   "    |               | | |",
+//   "    |               |_| |",
+//   " ___|             |\\___/",
+//   "/    \\___________/    \\",
+//   "\\_____________________/",
+// ];
+
 const song = ["best song ever"];
 
-let history = [];
+const hackSequence = [
+  "Initializing hack...",
+  "Connecting to mainframe...",
+  "Bypassing security protocols...",
+  "Access granted ✅",
+  "Just kidding! 😉 You're safe 😎",
+];
+
+let commandHistory = [];
