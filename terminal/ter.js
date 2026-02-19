@@ -7,6 +7,10 @@ const inputTextarea = document.querySelector("#text");
 let isAnimation = false;
 let currentCommandBlock = {};
 
+let isQuizMode = false;
+let quizIndex = 0;
+let quizScore = 0;
+
 // ==============================
 // Terminal Initialization
 // ==============================
@@ -20,9 +24,11 @@ window.addEventListener(
 );
 
 // Add initial command block and banner
-addNewCommandBlock();
-animateParagraph(banner);
-
+(async () => {
+  addNewCommandBlock(false);
+  await animateParagraph(banner);
+  addNewCommandBlock();
+})();
 // ==============================
 // COMMAND EXECUTION LOGIC
 // ==============================
@@ -49,8 +55,14 @@ function inputPrompt(textarea, e) {
   }
 }
 
-function executeCommand(textarea, e) {
+async function executeCommand(textarea, e) {
   if (isAnimation || e.key !== "Enter") return;
+
+  if (isQuizMode && e.key === "Enter") {
+    const answer = textarea.value.trim().toUpperCase();
+    checkQuizAnswer(answer);
+    return;
+  }
 
   const command = textarea.value.trim().split(" ")[0];
   commandHistory.push(command);
@@ -61,56 +73,59 @@ function executeCommand(textarea, e) {
     who: () => animateParagraph(who),
     project: () => animateParagraph(project),
     song: () => {
-      animateParagraph(song);
       openNewTab(
         "https://www.youtube.com/watch?v=dQw4w9WgXcQ&pp=ygUJcmljayByb29s",
       );
+      return animateParagraph(song);
     },
     contact: () => animateParagraph(contact),
     banner: () => animateParagraph(banner),
     history: () => animateParagraph(commandHistory),
+    favs: () => animateParagraph(favorites),
+    funtools: () => animateParagraph(funtools),
+    about: () => animateParagraph(about),
     singer: () => {
-      animateParagraph(["Must be Post Malone!!!!"]);
-      openNewTab("https://www.postmalone.com/");
+      openNewTab("https://www.jojimusic.com/");
+      return animateParagraph(["Must be Joji!!!!"]);
     },
     github: () => {
-      animateParagraph(["opening github..."]);
       openNewTab("https://github.com/stupienius");
+      return animateParagraph(["opening github..."]);
     },
     facebook: () => {
-      animateParagraph(["opening facebook..."]);
       openNewTab("https://www.facebook.com/profile.php?id=100053935834116");
+      return animateParagraph(["opening facebook..."]);
     },
     instagram: () => {
-      animateParagraph(["opening instagram..."]);
       openNewTab("https://www.instagram.com/stupienius/");
+      return animateParagraph(["opening instagram..."]);
     },
     x: () => {
-      animateParagraph(["opening x..."]);
       openNewTab("https://twitter.com/stupienius");
+      return animateParagraph(["opening x..."]);
     },
     clear: () => {
       terminal.innerHTML = "";
-      addNewCommandBlock();
+      return addNewCommandBlock();
     },
     echo: () => {
       const text = inputTextarea.value.slice(5).trim(); // get everything after "echo "
-      animateParagraph([text || ""]);
+      return animateParagraph([text || ""]);
     },
     coin: () => {
       const result = Math.random() < 0.5 ? "Heads 🪙" : "Tails 🪙";
-      animateParagraph([`You flipped a coin: ${result}`]);
+      return animateParagraph([`You flipped a coin: ${result}`]);
     },
-    hack: () => {
-      animateParagraph(hackSequence);
-    },
-    matrix: () => {
-      animateMatrix();
-    },
+    hack: () => animateParagraph(hackSequence),
+    matrix: () => animateMatrix(),
     roll: () => {
       const sides = 6;
       const result = Math.floor(Math.random() * sides) + 1;
-      animateParagraph([`🎲 You rolled a ${result}`]);
+      return animateParagraph([`🎲 You rolled a ${result}`]);
+    },
+
+    quiz: () => {
+      startQuiz();
     },
     // coffee: () => {
     //   animateParagraph(coffee);
@@ -119,16 +134,20 @@ function executeCommand(textarea, e) {
 
   // Execute command or fallback
   if (commandActions[command]) {
-    commandActions[command]();
+    await commandActions[command]();
   } else {
-    animateParagraph(["command not found"]);
+    await animateParagraph(["command not found"]);
+  }
+
+  if (command != "quiz") {
+    addNewCommandBlock();
   }
 }
 
 // ==============================
 // COMMAND BLOCK MANAGEMENT
 // ==============================
-function addNewCommandBlock() {
+function addNewCommandBlock(input_hint = true) {
   currentCommandBlock = {
     container: document.createElement("div"),
     input: document.createElement("div"),
@@ -144,9 +163,11 @@ function addNewCommandBlock() {
   currentCommandBlock.container.appendChild(currentCommandBlock.output);
   currentCommandBlock.output.classList.add("output");
 
-  currentCommandBlock.input.innerHTML = `
+  if (input_hint) {
+    currentCommandBlock.input.innerHTML = `
     <div class="prompt_hit">visitor@stupienius.Web:~$ </div>
     <div class="cursor"></div>`;
+  }
 
   inputTextarea.value = "";
   window.scrollTo(0, document.body.offsetHeight);
@@ -167,7 +188,6 @@ async function animateParagraph(lines) {
   isAnimation = true;
   for (const line of lines) await animateLine(line);
   isAnimation = false;
-  addNewCommandBlock();
 }
 
 async function animateLine(text) {
@@ -270,6 +290,73 @@ async function animateMatrix() {
   }
 
   isAnimation = false;
+}
+
+// ==============================
+// QUIZ MODE
+// ==============================
+
+async function startQuiz() {
+  isQuizMode = true;
+  quizIndex = 0;
+  quizScore = 0;
+
+  await animateParagraph([
+    "🎮 Welcome to the Terminal Quiz!",
+    "Type A, B, C, or D and press Enter.",
+    "",
+  ]);
+
+  await showNextQuestion();
+}
+
+async function showNextQuestion() {
+  if (quizIndex >= quizQuestions.length) {
+    endQuiz();
+    return;
+  }
+
+  const q = quizQuestions[quizIndex];
+
+  await animateParagraph([
+    `-- Question ${quizIndex + 1}:`,
+    q.question,
+    "",
+    ...q.options,
+    "",
+  ]);
+
+  addNewCommandBlock();
+}
+
+async function checkQuizAnswer(answer) {
+  const correct = quizQuestions[quizIndex].answer;
+
+  if (answer === correct) {
+    quizScore++;
+    await animateParagraph(["✅ Correct!", ""]);
+  } else {
+    await animateParagraph([`❌ Wrong! Correct answer was ${correct}`, ""]);
+  }
+
+  quizIndex++;
+  showNextQuestion();
+}
+
+async function endQuiz() {
+  isQuizMode = false;
+
+  await animateParagraph([
+    "🏁 Quiz Finished!",
+    `Your score: ${quizScore}/${quizQuestions.length}`,
+    "",
+    quizScore === quizQuestions.length
+      ? "You got A, Average, let me see A++ next time"
+      : quizScore > 1
+        ? "F, failure"
+        : "You are suck!",
+  ]);
+
   addNewCommandBlock();
 }
 

@@ -1,5 +1,4 @@
 // (class,href)<content>
-
 const banner = [
   "                       _            _ ",
   "       _              |_|          |_| ",
@@ -11,6 +10,34 @@ const banner = [
   "                |_|",
   "",
   "type (color1,)<help> for a list of available commands.",
+];
+
+const quizQuestions = [
+  {
+    question: "What is stupienius's favorite food?",
+    options: ["A. Pizza", "B. Burger", "C. Ramen", "D. Sushi"],
+    answer: "C",
+  },
+  {
+    question: "What is stupienius's favorite color?",
+    options: ["A. White", "B. Black", "C. Pink", "D. Yellow"],
+    answer: "B",
+  },
+  {
+    question: "Who is stupienius's favorite singer?",
+    options: ["A. Joji", "B. Post Malone", "C. Juice WRLD", "D. Billie Eilish"],
+    answer: "A",
+  },
+  {
+    question: "What is stupienius's dream travel destination?",
+    options: ["A. Japan", "B. USA", "C. France", "D. Australia"],
+    answer: "B",
+  },
+  {
+    question: "What is stupienius's favorite season?",
+    options: ["A. Spring", "B. Summer", "C. Autumn", "D. Winter"],
+    answer: "D",
+  },
 ];
 
 const whoami = [
@@ -29,16 +56,29 @@ const who = [
 
 const help = [
   "(color1,)<help>           Show command helper",
+  "(color1,)<favs>           Stupienius's favorites",
+  "(color1,)<funtools>       Some funny tools",
+  "(color1,)<about>          About stupienius",
+  "(color1,)<whoami>         Who are you",
+  "(color1,)<banner>         Display the header",
+  "(color1,)<history>        Your command history",
+  "(color1,)<clear>          Clear terminal",
+  "(color1,)<echo [text]>    Someone will repeat your messages",
+];
+
+const about = [
+  "(color1,)<quiz>           short quiz about stupienius",
   "(color1,)<contact>        About my social contact",
   "(color1,)<project>        Show my projects",
   "(color1,)<who>            Who is stupienius",
-  "(color1,)<whoami>         Who are you",
+];
+
+const favorites = [
   "(color1,)<song>           Listen to music",
-  "(color1,)<banner>         Display the header",
-  "(color1,)<history>        Your command history",
   "(color1,)<singer>         Best singer ever",
-  "(color1,)<clear>          Clear terminal",
-  "(color1,)<echo [text]>    Someone will repeat your messages",
+];
+
+const funtools = [
   "(color1,)<coin>           Flip a coin",
   "(color1,)<hack>           Hack the website",
   "(color1,)<matrix>         Display matrix effect",

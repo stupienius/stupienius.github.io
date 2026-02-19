@@ -1,19 +1,19 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Terminal-like Website</title>
-    <link rel="stylesheet" href="ter.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>stupienius's terminal</title>
+  <link rel="stylesheet" href="ter.css" />
 </head>
+
 <body>
-    <input  id="text"
-            onkeydown = "executeCommand(this, event);
-                         inputPrompt(this, event)"
-            autofocus>
-    <div class="terminal">
-    </div>
-    <script src="command.js"></script>
-    <script src="ter.js"></script>
+  <input id="text" onkeydown="executeCommand(this, event);
+                         inputPrompt(this, event)" autofocus />
+  <div class="terminal"></div>
+  <script src="command.js"></script>
+  <script src="ter.js"></script>
 </body>
+
 </html>
