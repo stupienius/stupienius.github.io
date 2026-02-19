@@ -38,8 +38,6 @@ function inputPrompt(textarea, e) {
   const basePrompt = `<div class="prompt_hit">visitor@stupienius.Web:~$ </div>`;
   const cursor = `<div class="cursor"></div>`;
 
-  console.log(e.key);
-
   // Show typed letter immediately for alphabet keys
   if (/^[a-zA-Z]$/.test(e.key)) {
     currentCommandBlock.input.innerHTML = `${basePrompt}
@@ -139,7 +137,7 @@ async function executeCommand(textarea, e) {
     await animateParagraph(["command not found"]);
   }
 
-  if (command != "quiz") {
+  if (command != "quiz" && command != "clear") {
     addNewCommandBlock();
   }
 }
