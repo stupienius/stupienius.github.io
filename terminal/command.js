@@ -12,6 +12,10 @@ const banner = [
   "type (color1,)<help> for a list of available commands.",
 ];
 
+const friends = [
+  '(color1,https://r3xdj.github.io/)<R3X_DJ>    "對不起我都在 Vibe Hacking"',
+];
+
 const quizQuestions = [
   {
     question: "What is stupienius's favorite food?",
@@ -63,6 +67,7 @@ const help = [
   "(color1,)<banner>         Display the header",
   "(color1,)<history>        Your command history",
   "(color1,)<clear>          Clear terminal",
+  "(color1,)<friends>        My friedns' website",
   "(color1,)<echo [text]>    Someone will repeat your messages",
 ];
 

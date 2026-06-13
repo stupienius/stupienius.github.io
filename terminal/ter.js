@@ -82,6 +82,12 @@ async function executeCommand(textarea, e) {
     favs: () => animateParagraph(favorites),
     funtools: () => animateParagraph(funtools),
     about: () => animateParagraph(about),
+    friends: () => animateParagraph(friends),
+    R3X_DJ: () => {
+      openNewTab("https://r3xdj.github.io/");
+      return animateParagraph(["Orz ....."]);
+    },
+
     singer: () => {
       openNewTab("https://www.jojimusic.com/");
       return animateParagraph(["Must be Joji!!!!"]);
