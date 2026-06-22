@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>直式四則運算練習器</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* 鎖定手機畫面並防止雙擊放大 */
+        body {
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+        /* 閃爍的游標效果 */
+        .cursor-blink {
+            animation: blink 1s infinite;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans select-none antialiased min-h-screen flex flex-col justify-between">
+
+    <div id="app" class="w-full max-w-md mx-auto flex flex-col justify-between flex-grow px-4 py-3">
+        
+        <div id="screen-start" class="flex flex-col justify-center items-center flex-grow space-y-6">
+            <div class="text-center">
+                <h1 class="text-3xl font-extrabold text-blue-600 tracking-wide">直式運算大師</h1>
+                <p class="text-slate-500 mt-2 text-sm">專為手機設計的直式手算練習工具</p>
+            </div>
+            
+            <div class="w-full space-y-3">
+                <button onclick="startExercise('add')" class="w-full bg-white hover:bg-blue-50 border border-slate-200 text-slate-700 font-semibold py-4 px-6 rounded-2xl shadow-sm active:scale-[0.98] transition flex justify-between items-center text-lg">
+                    <span>➕ 加法練習 (二~三位數)</span>
+                    <span class="text-blue-500 text-sm">4 題</span>
+                </button>
+                <button onclick="startExercise('sub')" class="w-full bg-white hover:bg-blue-50 border border-slate-200 text-slate-700 font-semibold py-4 px-6 rounded-2xl shadow-sm active:scale-[0.98] transition flex justify-between items-center text-lg">
+                    <span>➖ 減法練習 (二~三位數)</span>
+                    <span class="text-blue-500 text-sm">4 題</span>
+                </button>
+                <button onclick="startExercise('mul')" class="w-full bg-white hover:bg-blue-50 border border-slate-200 text-slate-700 font-semibold py-4 px-6 rounded-2xl shadow-sm active:scale-[0.98] transition flex justify-between items-center text-lg">
+                    <span>✖️ 乘法練習 (二~三位數)</span>
+                    <span class="text-blue-500 text-sm">4 題</span>
+                </button>
+                <button onclick="startExercise('div')" class="w-full bg-white hover:bg-blue-50 border border-slate-200 text-slate-700 font-semibold py-4 px-6 rounded-2xl shadow-sm active:scale-[0.98] transition flex justify-between items-center text-lg">
+                    <span>➗ 除法練習 (至小數二位)</span>
+                    <span class="text-blue-500 text-sm">4 題</span>
+                </button>
+                <button onclick="startExercise('mixed')" class="w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-bold py-4 px-6 rounded-2xl shadow-md active:scale-[0.98] transition flex justify-between items-center text-lg">
+                    <span>🔥 綜合挑戰 (各出一題)</span>
+                    <span class="bg-white/20 px-2 py-0.5 rounded-md text-xs">熱門</span>
+                </button>
+            </div>
+        </div>
+
+        <div id="screen-exercise" class="hidden flex-col justify-between flex-grow">
+            <div class="flex justify-between items-center border-b border-slate-200 pb-2 mb-3">
+                <span id="info-progress" class="text-sm font-bold bg-blue-100 text-blue-700 px-3 py-1 rounded-full">題目 1 / 4</span>
+                <span id="info-mode" class="text-xs font-medium text-slate-400">加法模式</span>
+                <span id="info-timer" class="text-sm font-mono font-bold text-slate-600 bg-slate-200/60 px-3 py-1 rounded-full">00:00</span>
+            </div>
+
+            <div class="flex-grow flex flex-col justify-center items-center py-4 overflow-x-auto">
+                <div id="math-grid-container" class="flex flex-col items-end space-y-1 font-mono text-xl tracking-widest p-4 bg-white rounded-2xl shadow-sm border border-slate-100 min-w-[240px]">
+                    </div>
+            </div>
+
+            <div class="my-3 text-center">
+                <div id="feedback-message" class="hidden text-base font-bold py-2 px-4 rounded-xl mb-2"></div>
+                <button id="btn-next" onclick="nextQuestion()" class="hidden w-full bg-indigo-600 text-white font-bold py-3 rounded-xl shadow-md active:scale-95 transition">進入下一題 ➡️</button>
+            </div>
+
+            <div class="w-full bg-slate-100 rounded-2xl p-2 gap-1.5 grid grid-cols-4 shadow-inner">
+                <button onclick="pressKey('7')" class="bg-white active:bg-slate-200 text-slate-700 font-bold py-3.5 rounded-xl shadow-sm text-lg">7</button>
+                <button onclick="pressKey('8')" class="bg-white active:bg-slate-200 text-slate-700 font-bold py-3.5 rounded-xl shadow-sm text-lg">8</button>
+                <button onclick="pressKey('9')" class="bg-white active:bg-slate-200 text-slate-700 font-bold py-3.5 rounded-xl shadow-sm text-lg">9</button>
+                <button onclick="pressKey('del')" class="bg-orange-100 active:bg-orange-200 text-orange-600 font-bold py-3.5 rounded-xl shadow-sm text-base">刪除</button>
+                
+                <button onclick="pressKey('4')" class="bg-white active:bg-slate-200 text-slate-700 font-bold py-3.5 rounded-xl shadow-sm text-lg">4</button>
+                <button onclick="pressKey('5')" class="bg-white active:bg-slate-200 text-slate-700 font-bold py-3.5 rounded-xl shadow-sm text-lg">5</button>
+                <button onclick="pressKey('6')" class="bg-white active:bg-slate-200 text-slate-700 font-bold py-3.5 rounded-xl shadow-sm text-lg">6</button>
+                <button onclick="pressKey('prev')" class="bg-slate-200 active:bg-slate-300 text-slate-600 font-bold py-3.5 rounded-xl shadow-sm text-base">←</button>
+                
+                <button onclick="pressKey('1')" class="bg-white active:bg-slate-200 text-slate-700 font-bold py-3.5 rounded-xl shadow-sm text-lg">1</button>
+                <button onclick="pressKey('2')" class="bg-white active:bg-slate-200 text-slate-700 font-bold py-3.5 rounded-xl shadow-sm text-lg">2</button>
+                <button onclick="pressKey('3')" class="bg-white active:bg-slate-200 text-slate-700 font-bold py-3.5 rounded-xl shadow-sm text-lg">3</button>
+                <button onclick="pressKey('next')" class="bg-slate-200 active:bg-slate-300 text-slate-600 font-bold py-3.5 rounded-xl shadow-sm text-base">→</button>
+                
+                <button onclick="pressKey('0')" class="col-span-3 bg-white active:bg-slate-200 text-slate-700 font-bold py-3.5 rounded-xl shadow-sm text-lg">0</button>
+                <button onclick="submitAnswer()" class="bg-blue-600 active:bg-blue-700 text-white font-bold py-3.5 rounded-xl shadow-md text-base">送出</button>
+            </div>
+        </div>
+
+        <div id="screen-summary" class="hidden flex-col justify-center items-center flex-grow space-y-6 text-center">
+            <div class="bg-white border border-slate-100 p-8 rounded-3xl shadow-md w-full space-y-4">
+                <span class="text-5xl">🎉</span>
+                <h2 class="text-2xl font-black text-slate-800">練習完成！</h2>
+                
+                <div class="grid grid-cols-2 gap-4 py-4">
+                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                        <p class="text-xs text-slate-400 font-medium">總花費時間</p>
+                        <p id="summary-time" class="text-xl font-mono font-bold text-slate-700 mt-1">00:00</p>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                        <p class="text-xs text-slate-400 font-medium">答對題數</p>
+                        <p id="summary-score" class="text-xl font-bold text-blue-600 mt-1">0 / 4</p>
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="backToHome()" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-4 rounded-2xl shadow-md active:scale-95 transition text-lg">
+                返回首頁 🏠
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        let state = {
+            screen: 'start',
+            mode: 'add',
+            questions: [],
+            currentIdx: 0,
+            correctCount: 0,
+            startTime: null,
+            timerInterval: null,
+            elapsedSeconds: 0,
+            currentCells: [], 
+            activeCellIdx: 0, 
+            isValidated: false, 
+            isFirstSubmitDone: false 
+        };
+
+        function rand(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+        
+        function randNoZero(min, max) {
+            let num = rand(min, max);
+            while(num.toString().includes('0')) { num = rand(min, max); }
+            return num;
+        }
+
+        function startExercise(mode) {
+            state.mode = mode;
+            state.questions = [];
+            state.currentIdx = 0;
+            state.correctCount = 0;
+            state.elapsedSeconds = 0;
+            
+            let modesPool = ['add', 'sub', 'mul', 'div'];
+            for(let i = 0; i < 4; i++) {
+                let currentType = (mode === 'mixed') ? modesPool[i] : mode;
+                state.questions.push(generateQuestion(currentType));
+            }
+
+            document.getElementById('screen-start').classList.add('hidden');
+            document.getElementById('screen-exercise').classList.remove('hidden');
+            
+            state.startTime = Date.now();
+            clearInterval(state.timerInterval);
+            state.timerInterval = setInterval(() => {
+                state.elapsedSeconds++;
+                let m = String(Math.floor(state.elapsedSeconds / 60)).padStart(2, '0');
+                let s = String(state.elapsedSeconds % 60).padStart(2, '0');
+                document.getElementById('info-timer').innerText = `${m}:${s}`;
+            }, 1000);
+
+            loadQuestion();
+        }
+
+        function generateQuestion(type) {
+            let A, B;
+            if (type === 'add') {
+                A = rand(10, 999); B = rand(10, 999);
+            } else if (type === 'sub') {
+                A = rand(10, 999); B = rand(10, 999);
+                if (A < B) { let t = A; A = B; B = t; } 
+            } else if (type === 'mul') {
+                A = rand(10, 999); B = randNoZero(11, 99); 
+            } else if (type === 'div') {
+                B = rand(11, 99); 
+                A = rand(100, 999); 
+                if (A < B) A += B;
+            }
+            return { type, A, B };
+        }
+
+        function loadQuestion() {
+            state.currentCells = [];
+            state.activeCellIdx = 0;
+            state.isValidated = false;
+            state.isFirstSubmitDone = false;
+
+            document.getElementById('feedback-message').classList.add('hidden');
+            document.getElementById('btn-next').classList.add('hidden');
+            document.getElementById('info-progress').innerText = `題目 ${state.currentIdx + 1} / 4`;
+            
+            let q = state.questions[state.currentIdx];
+            let modeLabels = { add: '➕ 加法直式', sub: '➖ 減法直式', mul: '✖️ 乘法直式', div: '➗ 除法直式' };
+            document.getElementById('info-mode').innerText = modeLabels[q.type];
+
+            buildVerticalGrid(q.type, q.A, q.B);
+            renderGridHTML();
+        }
+
+        function buildVerticalGrid(type, A, B) {
+            state.gridRows = []; 
+            
+            if (type === 'add' || type === 'sub') {
+                let ans = (type === 'add') ? (A + B) : (A - B);
+                let strA = A.toString(), strB = B.toString(), strAns = ans.toString();
+                let maxLen = Math.max(strA.length, strB.length, strAns.length) + 1;
+
+                let ansCellsTemp = [];
+                for (let i = 0; i < strAns.length; i++) {
+                    state.currentCells.push({ expected: strAns[strAns.length - 1 - i], value: '' });
+                    ansCellsTemp.push(state.currentCells.length - 1);
+                }
+
+                let r0 = Array(maxLen - strA.length).fill({ type: 'empty' })
+                              .concat(strA.split('').map(c => ({ type: 'text', val: c })));
+                let r1 = [{ type: 'text', val: type === 'add' ? '+' : '-' }]
+                              .concat(Array(maxLen - 1 - strB.length).fill({ type: 'empty' }))
+                              .concat(strB.split('').map(c => ({ type: 'text', val: c })));
+                let r2 = Array(maxLen - strAns.length).fill({ type: 'empty' });
+                for(let i = 0; i < strAns.length; i++) {
+                    let placeFromRight = strAns.length - 1 - i;
+                    r2.push({ type: 'input', cellIdx: ansCellsTemp[placeFromRight] });
+                }
+
+                state.gridRows.push({ items: r0 });
+                state.gridRows.push({ items: r1, border: true });
+                state.gridRows.push({ items: r2 });
+
+            } else if (type === 'mul') {
+                let ans = A * B;
+                let strA = A.toString(), strB = B.toString(), strAns = ans.toString();
+                let maxLen = Math.max(strA.length + strB.length, strAns.length) + 1;
+
+                let partialProducts = [];
+                for (let i = 0; i < strB.length; i++) {
+                    let digit = parseInt(strB[strB.length - 1 - i]);
+                    partialProducts.push({
+                        str: (A * digit).toString(),
+                        shift: i
+                    });
+                }
+
+                let partialCellsMapping = [];
+                for (let p of partialProducts) {
+                    let rowCells = [];
+                    for (let j = 0; j < p.str.length; j++) {
+                        state.currentCells.push({ expected: p.str[p.str.length - 1 - j], value: '' });
+                        rowCells.push(state.currentCells.length - 1);
+                    }
+                    partialCellsMapping.push(rowCells);
+                }
+                
+                let ansCellsTemp = [];
+                for (let j = 0; j < strAns.length; j++) {
+                    state.currentCells.push({ expected: strAns[strAns.length - 1 - j], value: '' });
+                    ansCellsTemp.push(state.currentCells.length - 1);
+                }
+
+                let r0 = Array(maxLen - strA.length).fill({ type: 'empty' }).concat(strA.split('').map(c => ({ type: 'text', val: c })));
+                let r1 = [{ type: 'text', val: '×' }].concat(Array(maxLen - 1 - strB.length).fill({ type: 'empty' })).concat(strB.split('').map(c => ({ type: 'text', val: c })));
+                state.gridRows.push({ items: r0 });
+                state.gridRows.push({ items: r1, border: true });
+
+                for (let i = 0; i < partialProducts.length; i++) {
+                    let p = partialProducts[i];
+                    let rowCells = partialCellsMapping[i];
+                    let rMiddle = [];
+                    let endPos = maxLen - 1 - p.shift;
+                    let startPos = endPos - p.str.length + 1;
+
+                    for (let col = 0; col < maxLen; col++) {
+                        if (col >= startPos && col <= endPos) {
+                            let idxInStr = col - startPos;
+                            let placeFromRight = p.str.length - 1 - idxInStr;
+                            rMiddle.push({ type: 'input', cellIdx: rowCells[placeFromRight] });
+                        } else {
+                            rMiddle.push({ type: 'empty' });
+                        }
+                    }
+                    state.gridRows.push({ items: rMiddle, border: (i === partialProducts.length - 1) });
+                }
+
+                let rAns = [];
+                let startPos = maxLen - strAns.length;
+                for (let col = 0; col < maxLen; col++) {
+                    if (col >= startPos) {
+                        let idxInStr = col - startPos;
+                        let placeFromRight = strAns.length - 1 - idxInStr;
+                        rAns.push({ type: 'input', cellIdx: ansCellsTemp[placeFromRight] });
+                    } else {
+                        rAns.push({ type: 'empty' });
+                    }
+                }
+                state.gridRows.push({ items: rAns });
+
+            } else if (type === 'div') {
+                let strA = A.toString();
+                let fullDigits = (strA + "00").split(''); 
+                let dotIdx = strA.length; 
+                let strB = B.toString();
+
+                let currentVal = 0;
+                let lastRemainder = 0;
+                let started = false;
+                let steps = [];
+
+                for(let i = 0; i < fullDigits.length; i++) {
+                    currentVal = lastRemainder * 10 + parseInt(fullDigits[i]);
+                    let qDigit = Math.floor(currentVal / B);
+                    let sub = qDigit * B;
+                    let rem = currentVal - sub;
+
+                    if (started || qDigit > 0 || i >= dotIdx - 1) {
+                        started = true;
+                        steps.push({
+                            digitIdx: i,
+                            qStr: qDigit.toString(),
+                            subStr: sub.toString(),
+                            remStr: rem.toString(),
+                            currValStr: currentVal.toString()
+                        });
+                        lastRemainder = rem;
+                    } else {
+                        lastRemainder = currentVal;
+                    }
+                }
+
+                for(let s = 0; s < steps.length; s++) {
+                    if (s < steps.length - 1) {
+                        steps[s].visualRemStr = steps[s+1].currValStr;
+                        steps[s].visualRemEndIdx = steps[s+1].digitIdx;
+                    } else {
+                        steps[s].visualRemStr = steps[s].remStr;
+                        steps[s].visualRemEndIdx = steps[s].digitIdx;
+                    }
+                }
+
+                for(let step of steps) {
+                    state.currentCells.push({ expected: step.qStr, value: '' });
+                    step.cellIdxQ = state.currentCells.length - 1;
+
+                    // 修改：相乘數由右至左建置填寫順序
+                    step.cellIdxsSub = new Array(step.subStr.length);
+                    for(let j = 0; j < step.subStr.length; j++) {
+                        let placeFromRight = step.subStr.length - 1 - j;
+                        state.currentCells.push({ expected: step.subStr[placeFromRight], value: '' });
+                        step.cellIdxsSub[placeFromRight] = state.currentCells.length - 1;
+                    }
+
+                    // 修改：相減餘數也由右至左建置填寫順序
+                    step.cellIdxsRem = new Array(step.visualRemStr.length);
+                    for(let j = 0; j < step.visualRemStr.length; j++) {
+                        let placeFromRight = step.visualRemStr.length - 1 - j;
+                        state.currentCells.push({ expected: step.visualRemStr[placeFromRight], value: '' });
+                        step.cellIdxsRem[placeFromRight] = state.currentCells.length - 1;
+                    }
+                }
+
+                // 修改：不將小數點設為獨立欄位，改用 hasDot 屬性依附在被除數欄位
+                let divCols = [];
+                for(let c of strB) divCols.push({ type: 'divisor', val: c });
+                divCols.push({ type: 'bracket', val: ')' });
+                
+                let dividendColMapping = [];
+                for(let i = 0; i < fullDigits.length; i++) {
+                    dividendColMapping.push(divCols.length);
+                    divCols.push({ type: 'dividend', val: fullDigits[i], idx: i, hasDot: (i === dotIdx - 1) });
+                }
+                let totalCols = divCols.length;
+
+                // 列0：商數行
+                let rQ = [];
+                for(let c = 0; c < totalCols; c++) {
+                    let spec = divCols[c];
+                    if (spec.type === 'dividend') {
+                        let step = steps.find(s => s.digitIdx === spec.idx);
+                        if (step) rQ.push({ type: 'input', cellIdx: step.cellIdxQ, hasDot: spec.hasDot });
+                        else rQ.push({ type: 'empty', hasDot: spec.hasDot });
+                    } else rQ.push({ type: 'empty' });
+                }
+                state.gridRows.push({ items: rQ });
+
+                // 列1：除數 + 廠字殼 + 被除數
+                let rDiv = divCols.map(spec => ({ type: 'text', val: spec.val, hasDot: spec.hasDot }));
+                state.gridRows.push({ items: rDiv, border: true });
+
+                for(let step of steps) {
+                    let rSub = [];
+                    let targetCol = dividendColMapping[step.digitIdx];
+                    let startCol = targetCol - step.subStr.length + 1;
+                    for(let c = 0; c < totalCols; c++) {
+                        if (c >= startCol && c <= targetCol) {
+                            rSub.push({ type: 'input', cellIdx: step.cellIdxsSub[c - startCol] });
+                        } else rSub.push({ type: 'empty' });
+                    }
+                    state.gridRows.push({ items: rSub, border: true });
+
+                    let rRem = [];
+                    let rTargetCol = dividendColMapping[step.visualRemEndIdx];
+                    let rStartCol = rTargetCol - step.visualRemStr.length + 1;
+                    for(let c = 0; c < totalCols; c++) {
+                        if (c >= rStartCol && c <= rTargetCol) {
+                            rRem.push({ type: 'input', cellIdx: step.cellIdxsRem[c - rStartCol] });
+                        } else rRem.push({ type: 'empty' });
+                    }
+                    state.gridRows.push({ items: rRem });
+                }
+            }
+        }
+
+        function renderGridHTML() {
+            let container = document.getElementById('math-grid-container');
+            container.innerHTML = '';
+
+            state.gridRows.forEach(row => {
+                let rowEl = document.createElement('div');
+                rowEl.className = `flex items-center justify-end w-full h-10 ${row.border ? 'border-b-2 border-slate-700' : ''}`;
+                
+                row.items.forEach(item => {
+                    let cellEl = document.createElement('div');
+                    
+                    if (item.type === 'empty') {
+                        cellEl.className = 'w-7 h-8 mx-0.5';
+                    } else if (item.type === 'text') {
+                        cellEl.className = 'w-7 h-8 mx-0.5 flex justify-center items-center font-bold text-slate-700';
+                        cellEl.innerText = item.val;
+                        if(item.val === ')') cellEl.className += ' border-r border-slate-500 rounded-tr-md';
+                    } else if (item.type === 'input') {
+                        let cellData = state.currentCells[item.cellIdx];
+                        let isActive = (item.cellIdx === state.activeCellIdx);
+                        
+                        let bgClass = 'bg-white border-slate-300';
+                        if (isActive) bgClass = 'bg-blue-50 border-blue-500 ring-2 ring-blue-300';
+                        if (state.isValidated) {
+                            if (cellData.value !== cellData.expected) {
+                                bgClass = 'bg-red-50 border-red-500 ring-1 ring-red-400 text-red-600';
+                            } else {
+                                bgClass = 'bg-green-50 border-green-500 text-green-600';
+                            }
+                        }
+
+                        cellEl.className = `w-7 h-8 mx-0.5 border rounded-md flex justify-center items-center font-bold text-base transition-all ${bgClass}`;
+                        
+                        if (cellData.value) {
+                            cellEl.innerText = cellData.value;
+                        } else if (isActive) {
+                            let cursor = document.createElement('span');
+                            cursor.className = 'w-0.5 h-4 bg-blue-600 cursor-blink';
+                            cellEl.appendChild(cursor);
+                        }
+
+                        cellEl.onclick = () => {
+                            state.activeCellIdx = item.cellIdx;
+                            renderGridHTML();
+                        };
+                    }
+                    
+                    // 加入小數點渲染 (透過絕對定位不佔用正常排版空間)
+                    if (item.hasDot) {
+                        cellEl.classList.add('relative');
+                        let dotEl = document.createElement('span');
+                        dotEl.className = 'absolute -right-[7px] bottom-0 text-xl font-black text-slate-800 z-10';
+                        dotEl.innerText = '.';
+                        cellEl.appendChild(dotEl);
+                    }
+
+                    rowEl.appendChild(cellEl);
+                });
+                container.appendChild(rowEl);
+            });
+        }
+
+        function pressKey(key) {
+            if (state.currentCells.length === 0) return;
+            let currentCell = state.currentCells[state.activeCellIdx];
+
+            if (key >= '0' && key <= '9') {
+                currentCell.value = key;
+                if (state.activeCellIdx < state.currentCells.length - 1) {
+                    state.activeCellIdx++;
+                }
+            } else if (key === 'del') {
+                currentCell.value = '';
+            } else if (key === 'prev') {
+                if (state.activeCellIdx > 0) state.activeCellIdx--;
+            } else if (key === 'next') {
+                if (state.activeCellIdx < state.currentCells.length - 1) state.activeCellIdx++;
+            }
+
+            renderGridHTML();
+        }
+
+        function submitAnswer() {
+            let isAllCorrect = true;
+            state.currentCells.forEach(cell => {
+                if (cell.value !== cell.expected) isAllCorrect = false;
+            });
+
+            state.isValidated = true;
+            
+            if (!state.isFirstSubmitDone) {
+                if (isAllCorrect) state.correctCount++;
+                state.isFirstSubmitDone = true;
+            }
+
+            let msgEl = document.getElementById('feedback-message');
+            msgEl.classList.remove('hidden', 'bg-red-100', 'text-red-700', 'bg-green-100', 'text-green-700');
+
+            if (isAllCorrect) {
+                msgEl.innerText = '✨ 答對了！太厲害了！';
+                msgEl.classList.add('bg-green-100', 'text-green-700');
+            } else {
+                msgEl.innerText = '❌ 還有地方不對喔，找找看紅色格子！';
+                msgEl.classList.add('bg-red-100', 'text-red-700');
+            }
+
+            document.getElementById('btn-next').classList.remove('hidden');
+            renderGridHTML();
+        }
+
+        function nextQuestion() {
+            if (state.currentIdx < 3) {
+                state.currentIdx++;
+                loadQuestion();
+            } else {
+                clearInterval(state.timerInterval);
+                state.screen = 'summary';
+                
+                document.getElementById('screen-exercise').classList.add('hidden');
+                document.getElementById('screen-summary').classList.remove('hidden');
+
+                let m = String(Math.floor(state.elapsedSeconds / 60)).padStart(2, '0');
+                let s = String(state.elapsedSeconds % 60).padStart(2, '0');
+                document.getElementById('summary-time').innerText = `${m}:${s}`;
+                document.getElementById('summary-score').innerText = `${state.correctCount} / 4`;
+            }
+        }
+
+        function backToHome() {
+            document.getElementById('screen-summary').classList.add('hidden');
+            document.getElementById('screen-start').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
