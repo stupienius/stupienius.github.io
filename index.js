@@ -1,4 +1,8 @@
-const  info = document.querySelector(".info");
+const image = document.querySelector("#back");
 
+console.log(image);
 
-console.log(window.innerWidth);
+image.addEventListener("load", () => {
+  image.classList.add("loaded");
+  console.log("hello");
+});
