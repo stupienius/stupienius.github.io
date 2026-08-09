@@ -110,30 +110,38 @@ main img.loaded {
 
 main img {
   mask-image:
-    linear-gradient(to right,
+    linear-gradient(
+      to right,
       transparent 0%,
       black 45%,
       black 65%,
-      transparent 100%),
-    linear-gradient(to bottom,
+      transparent 100%
+    ),
+    linear-gradient(
+      to bottom,
       transparent 0%,
       black 15%,
       black 85%,
-      transparent 100%);
+      transparent 100%
+    );
 
   mask-composite: intersect;
 
   -webkit-mask-image:
-    linear-gradient(to right,
+    linear-gradient(
+      to right,
       transparent 0%,
       black 45%,
       black 65%,
-      transparent 100%),
-    linear-gradient(to bottom,
+      transparent 100%
+    ),
+    linear-gradient(
+      to bottom,
       transparent 0%,
       black 15%,
       black 85%,
-      transparent 100%);
+      transparent 100%
+    );
 
   -webkit-mask-composite: source-in;
 }
@@ -161,6 +169,7 @@ main .info section {
   align-items: center;
   border-radius: 10px;
   padding: 30px;
+  font-size: 1.45rem;
   background-color: rgba(30, 30, 30, 0.6);
   border: 1px solid rgba(225, 255, 255, 0.08);
 }
@@ -174,7 +183,7 @@ main .info h4 {
   display: grid;
   place-items: center;
   font-size: 1.3rem;
-  color: #000;
+  color: #000000;
   font-family: Arial Black;
   background: linear-gradient(135deg, #f12711b6, #f5af19af);
   box-shadow: inset 0 -3px 6px 3px rgba(0, 0, 0, 0.5);
@@ -187,15 +196,14 @@ main .info ul {
   width: 100%;
   margin-left: auto;
   margin-right: auto;
-  font-size: 1.45rem;
   padding: 0 5px 10px 50px;
   color: #e0e0e0;
   list-style-type: square;
   z-index: 1;
+  list-style-position: inside;
 }
 
 main .info ul li {
-  font-size: 1.65rem;
   line-height: 1.6;
   color: #d1d1d1;
 }
@@ -286,7 +294,11 @@ footer p {
   }
 
   main {
-    padding: 25px 15px;
+    padding: 25px 0;
+  }
+
+  main .info {
+    padding: 10px;
   }
 
   main .info h4 {
@@ -296,8 +308,16 @@ footer p {
   }
 
   main .info section {
-    padding: 35px 20px 20px 30px;
+    padding: 15px 3px 15px 3px;
     font-size: 0.95rem;
+  }
+
+  main .info section ul {
+    padding: 0 20px;
+  }
+
+  main .info .desc {
+    font-size: 0.75rem;
   }
 }
 
